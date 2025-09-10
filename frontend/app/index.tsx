@@ -14,6 +14,7 @@ import {
   Dimensions,
   Platform,
   FlatList,
+  Share,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getDashboard as dbGetDashboard, updatePills as dbUpdatePills, updateDrink as dbUpdateDrink, addWeight as dbAddWeight, getWeightRange as dbGetWeightRange, getWeightProgress as dbGetWeightProgress, getGoals as dbGetGoals, createGoal as dbCreateGoal, getReminders as dbGetReminders, createReminder as dbCreateReminder, toggleReminder as dbToggleReminder, deleteReminder as dbDeleteReminder, updateReminderTime as dbUpdateReminderTime, getAppSettings as dbGetAppSettings, updateAppSettings as dbUpdateAppSettings, computeAchievementsAndStats, getAchievements as dbGetAchievements, getUserStats as dbGetUserStats, getSavedMessages as dbGetSavedMessages, saveMessage as dbSaveMessage, deleteSavedMessageLocal, sendChat as dbSendChat, parseGermanDate, formatDateDisplay } from './utils/localDb';
