@@ -40,9 +40,8 @@ workflows:
         script: |
           cd frontend
           SRC=$(ls android/app/build/outputs/apk/release/*.apk | head -n 1)
-          DEST="Scarletts-Gesundheitstracking-release.apk"
-          mkdir -p "$CM_ARTIFACTS"
-          cp "$SRC" "$CM_ARTIFACTS/$DEST"
+          DEST="android/app/build/outputs/apk/release/Scarletts-Gesundheitstracking-release.apk"
+          cp "$SRC" "$DEST"
     artifacts:
       - frontend/android/app/build/outputs/**/*.apk
       - frontend/android/app/build/outputs/**/mapping.txt
