@@ -1860,7 +1860,10 @@ export default function ScarlettHealthDashboard() {
                       styles.themeOptionText,
                       { color: currentTheme === themeKey ? colors.text : colors.textSecondary }
                     ]}>
-                      {themeKey === 'pink' ? 'Rosa' : themeKey === 'blue' ? 'Blau' : 'Grün'}
+                      {themeKey === 'pink' ? 'Rosa (Standard)'
+  : themeKey === 'pinkPastel' ? 'Rosa Pastell'
+  : themeKey === 'pinkNormal' ? 'Rosa Kräftig'
+  : themeKey}
                     </Text>
                   </TouchableOpacity>
                 ))}
