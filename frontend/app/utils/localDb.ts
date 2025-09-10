@@ -308,3 +308,40 @@ export function parseGermanDate(input: string): string | null {
   if (d.getFullYear() !== fullYear || d.getMonth() !== mm-1 || d.getDate() !== dd) return null;
   return d.toISOString().split('T')[0];
 }
+
+// Export / Import (JSON as Text)
+export async function exportAll(): Promise<string> {
+  const payload = {
+    version: '1.0.1',
+    exported_at: new Date().toISOString(),
+    data: {
+      pills: await getJSON<Record<string, PillTracking>>(K.PILLS, {}),
+      drinks: await getJSON<Record<string, DrinkTracking>>(K.DRINKS, {}),
+      weights: await getJSON<Record<string, WeightEntry>>(K.WEIGHTS, {}),
+      goals: await getJSON<WeightGoal[]>(K.GOALS, []),
+      reminders: await getJSON<Reminder[]>(K.REMINDERS, []),
+      settings: await getJSON<AppSettings>(K.SETTINGS, { theme: 'pink', language: 'de', sound_enabled: true, vibration_enabled: true, analytics_enabled: false }),
+      saved_messages: await getJSON<SavedChatMessage[]>(K.SAVED_MSGS, []),
+      achievements: await getJSON<Achievement[]>(K.ACHIEVEMENTS, baseAchievements()),
+      user_stats: await getJSON<UserStats>(K.USER_STATS, { id:'user_stats', total_xp:0, current_level:1, current_streak_days:0, longest_streak:0, pills_taken_total:0, water_goals_achieved:0, weight_entries_total:0, perfect_days:0 }),
+    }
+  };
+  return JSON.stringify(payload, null, 2);
+}
+
+export async function importAllFromString(jsonStr: string) {
+  const obj = JSON.parse(jsonStr);
+  if (!obj || !obj.data) throw new Error('Ungültiges Sicherungsformat');
+  const d = obj.data;
+  if (d.pills) await setJSON(K.PILLS, d.pills);
+  if (d.drinks) await setJSON(K.DRINKS, d.drinks);
+  if (d.weights) await setJSON(K.WEIGHTS, d.weights);
+  if (d.goals) await setJSON(K.GOALS, d.goals);
+  if (d.reminders) await setJSON(K.REMINDERS, d.reminders);
+  if (d.settings) await setJSON(K.SETTINGS, d.settings);
+  if (d.saved_messages) await setJSON(K.SAVED_MSGS, d.saved_messages);
+  if (d.achievements) await setJSON(K.ACHIEVEMENTS, d.achievements);
+  if (d.user_stats) await setJSON(K.USER_STATS, d.user_stats);
+  // Recompute derived
+  await computeAchievementsAndStats();
+}
