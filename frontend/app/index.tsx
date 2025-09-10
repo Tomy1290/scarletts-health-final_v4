@@ -549,15 +549,8 @@ export default function ScarlettHealthDashboard() {
 
   // Reminders functions
   const fetchReminders = async () => {
-    try {
-      const response = await fetch(`${EXPO_PUBLIC_BACKEND_URL}/api/reminders`);
-      if (response.ok) {
-        const remindersData = await response.json();
-        setReminders(remindersData);
-      }
-    } catch (error) {
-      console.error('Error fetching reminders:', error);
-    }
+    const list = await dbGetReminders();
+    setReminders(list);
   };
 
   const createReminder = async () => {
