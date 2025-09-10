@@ -166,6 +166,12 @@ export async function toggleReminder(id: string) {
   if (idx >= 0) { list[idx].is_enabled = !list[idx].is_enabled; await setJSON(K.REMINDERS, list); }
   return list[idx];
 }
+export async function updateReminderTime(id: string, time: string) {
+  const list = await getReminders();
+  const idx = list.findIndex(r => r.id === id);
+  if (idx >= 0) { list[idx].time = time; await setJSON(K.REMINDERS, list); }
+  return list[idx];
+}
 export async function deleteReminder(id: string) {
   const list = await getReminders();
   const next = list.filter(r => r.id !== id);
