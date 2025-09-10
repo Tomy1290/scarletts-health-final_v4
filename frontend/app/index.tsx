@@ -855,8 +855,13 @@ export default function ScarlettHealthDashboard() {
   // Date navigation functions
   const navigateToNextDay = () => {
     const currentDate = new Date(selectedDate);
-    currentDate.setDate(currentDate.getDate() + 1);
-    setSelectedDate(currentDate.toISOString().split('T')[0]);
+    const nextDate = new Date(currentDate);
+    nextDate.setDate(currentDate.getDate() + 1);
+    const todayStr = new Date().toISOString().split('T')[0];
+    const nextStr = nextDate.toISOString().split('T')[0];
+    if (nextStr <= todayStr) {
+      setSelectedDate(nextStr);
+    }
   };
 
   const navigateToPreviousDay = () => {
