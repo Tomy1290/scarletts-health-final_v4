@@ -27,7 +27,7 @@ workflows:
       - name: Expo prebuild (android)
         script: |
           cd frontend
-          npx expo prebuild --platform android --clear
+          npx expo prebuild --platform android --clean --non-interactive
       - name: Set up local.properties
         script: |
           cd frontend
