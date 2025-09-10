@@ -80,6 +80,6 @@ export const themes: Record<'pink' | 'pinkPastel' | 'pinkNormal', ThemeColors> =
   },
 };
 
-export function getTheme(name: 'pink' | 'blue' | 'green' = 'pink'): ThemeColors {
+export function getTheme(name: 'pink' | 'pinkPastel' | 'pinkNormal' = 'pink'): ThemeColors {
   return themes[name];
 }
