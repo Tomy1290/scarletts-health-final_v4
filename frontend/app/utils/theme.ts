@@ -12,7 +12,7 @@ export type ThemeColors = {
   error: string;
 };
 
-export const themes: Record<'pink' | 'blue' | 'green', ThemeColors> = {
+export const themes: Record<'pink' | 'pinkPastel' | 'pinkNormal', ThemeColors> = {
   pink: {
     primary: '#FF69B4',
     secondary: '#FFB6C1',
