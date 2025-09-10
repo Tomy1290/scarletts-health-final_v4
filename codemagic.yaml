@@ -89,6 +89,13 @@ workflows:
         script: |
           cd frontend/android
           ./gradlew assembleDebug --no-daemon --stacktrace
+      - name: Name APK artifact (Debug)
+        script: |
+          cd frontend
+          SRC=$(ls android/app/build/outputs/apk/debug/*.apk | head -n 1)
+          DEST="Scarletts-Gesundheitstracking-debug.apk"
+          mkdir -p "$CM_ARTIFACTS"
+          cp "$SRC" "$CM_ARTIFACTS/$DEST"
     artifacts:
       - frontend/android/app/build/outputs/**/*.apk
     publishing:
