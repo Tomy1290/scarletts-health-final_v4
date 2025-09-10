@@ -879,62 +879,30 @@ async def root():
 @api_router.post("/health-chat")
 async def health_chat(request: ChatRequest):
     try:
-        # Initialize LLM Chat with health-focused system message
-        system_message = """Du bist Gugi, ein freundlicher und kompetenter KI-Gesundheitsassistent. 
-        Du hilfst bei:
-        - Gesundheitstipps und Wellness-Ratschlägen
-        - Gesunden Rezepten und Ernährungsberatung
-        - Motivation für Gewichtsziele
-        - Allgemeine Gesundheitsfragen
-        - Fitness und Bewegungsempfehlungen
-        
-        Antworte immer auf Deutsch, sei warmherzig und ermutigend. Gib keine medizinischen Diagnosen, 
-        sondern ermutige bei ernsten Gesundheitsproblemen, einen Arzt aufzusuchen."""
-        
-        session_id = request.session_id or str(uuid.uuid4())
-        
+        # Online KI (Google Gemini via Emergent Universal Key)
+        api_key = os.environ.get('EMERGENT_LLM_KEY')
+        if not api_key:
+            raise HTTPException(status_code=500, detail="EMERGENT_LLM_KEY fehlt im Backend")
+        system_prompt = (
+            "Du bist Gugi, ein hilfreicher Gesundheitsassistent. "
+            "Antworte präzise, freundlich und verantwortungsbewusst auf Deutsch. "
+            "Biete strukturierte Tipps zu Rezepten, Gesundheit, Motivation und Zielen."
+        )
         chat = LlmChat(
-            api_key=os.environ.get('EMERGENT_LLM_KEY'),
-            session_id=session_id,
-            system_message=system_message
-        ).with_model("openai", "gpt-4o-mini")
-        
-        # Create user message
-        user_message = UserMessage(text=request.message)
-        
-        # Get AI response
+            api_key=api_key,
+            provider=os.environ.get('LLM_PROVIDER', 'google'),
+            model=os.environ.get('LLM_MODEL', 'gemini-2.5-pro'),
+            system_prompt=system_prompt,
+        )
+        user_message = UserMessage(content=request.message)
         ai_response = await chat.send_message(user_message)
-        
-        # Save chat to database
-        user_chat_msg = ChatMessage(message=request.message, is_user=True)
-        ai_chat_msg = ChatMessage(message=ai_response, is_user=False)
-        
-        # Check if session exists
-        existing_session = await db.chat_sessions.find_one({"session_id": session_id})
-        if existing_session:
-            # Add messages to existing session
-            await db.chat_sessions.update_one(
-                {"session_id": session_id},
-                {
-                    "$push": {"messages": {"$each": [user_chat_msg.dict(), ai_chat_msg.dict()]}},
-                    "$set": {"updated_at": datetime.utcnow()}
-                }
-            )
-        else:
-            # Create new session
-            new_session = HealthChatSession(
-                session_id=session_id,
-                messages=[user_chat_msg, ai_chat_msg]
-            )
-            await db.chat_sessions.insert_one(new_session.dict())
-        
-        return {
-            "response": ai_response,
-            "session_id": session_id
-        }
-        
+        # Kein DB‑Speichern (App ist offline‑first). Session-ID nur für UI‑Konsistenz.
+        session_id = request.session_id or str(uuid.uuid4())
+        return {"session_id": session_id, "response": ai_response}
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Chat error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Chat-Fehler: {e}")
 
 @api_router.get("/health-chat/{session_id}")
 async def get_chat_history(session_id: str):
