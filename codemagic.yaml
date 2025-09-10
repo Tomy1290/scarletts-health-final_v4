@@ -1,0 +1,130 @@
+workflows:
+  expo-android:
+    name: Scarletts Gesundheitstracking - Android APK
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    triggering:
+      events:
+        - push
+        - tag
+        - pull_request
+      branch_patterns:
+        - pattern: '*'
+          include: true
+    environment:
+      vars:
+        EXPO_TOKEN: $EXPO_TOKEN
+      node: 18
+    scripts:
+      - name: Install dependencies (npm)
+        script: |
+          cd frontend
+          npm ci || npm install
+      - name: Setup Expo CLI
+        script: |
+          npm install -g @expo/cli@latest
+          npx expo --version
+      - name: Expo prebuild (android)
+        script: |
+          cd frontend
+          npx expo prebuild --platform android --clear
+      - name: Set up local.properties
+        script: |
+          cd frontend
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
+      - name: Build Android APK (Release)
+        script: |
+          cd frontend/android
+          ./gradlew assembleRelease --no-daemon --stacktrace
+    artifacts:
+      - frontend/android/app/build/outputs/**/*.apk
+      - frontend/android/app/build/outputs/**/mapping.txt
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+        notify:
+          success: true
+          failure: true
+
+  expo-android-debug:
+    name: Scarletts Gesundheitstracking - Android APK (Debug)
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: '*'
+          include: true
+    environment:
+      vars:
+        EXPO_TOKEN: $EXPO_TOKEN
+      node: 18
+    scripts:
+      - name: Install dependencies (npm)
+        script: |
+          cd frontend
+          npm ci || npm install
+      - name: Setup Expo CLI
+        script: |
+          npm install -g @expo/cli@latest
+          npx expo --version
+      - name: Expo prebuild (android)
+        script: |
+          cd frontend
+          npx expo prebuild --platform android --clear
+      - name: Set up local.properties
+        script: |
+          cd frontend
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
+      - name: Build Android APK (Debug)
+        script: |
+          cd frontend/android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+    artifacts:
+      - frontend/android/app/build/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+        notify:
+          success: true
+          failure: true
+
+  expo-android-eas:
+    name: Scarletts Gesundheitstracking - EAS Build
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+    environment:
+      vars:
+        EXPO_TOKEN: $EXPO_TOKEN
+      node: 18
+    scripts:
+      - name: Install dependencies (npm)
+        script: |
+          cd frontend
+          npm ci || npm install
+      - name: Setup EAS
+        script: |
+          npm install -g @expo/eas-cli@latest
+          eas whoami || true
+      - name: Build with EAS (Android Preview)
+        script: |
+          cd frontend
+          eas build --platform android --profile preview --non-interactive --no-wait
+    artifacts:
+      - "*.apk"
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+        notify:
+          success: true
+          failure: true

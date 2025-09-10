@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "Scarletts Gesundheitstracking",
+    "slug": "scarletts-health-tracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "health-tracker",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "description": "Umfangreiche Gesundheits-App mit KI-Assistent Gugi für Tabletten, Getränke, Gewicht und Achievements",
+    "privacy": "public",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#FF69B4"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.scarletts.healthtracker",
+      "permissions": [
+        "VIBRATE",
+        "RECEIVE_BOOT_COMPLETED",
+        "SCHEDULE_EXACT_ALARM"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-image.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#000"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
