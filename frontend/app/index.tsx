@@ -257,7 +257,8 @@ export default function ScarlettHealthDashboard() {
 
   // Theme state
   const [currentTheme, setCurrentTheme] = useState('pink');
-  const colors = themes[currentTheme as keyof typeof themes];
+  const themeKeySafe = (currentTheme in themes ? currentTheme : 'pink') as keyof typeof themes;
+  const colors = themes[themeKeySafe];
 
   // Modal states
   const [showWeightChart, setShowWeightChart] = useState(false);
